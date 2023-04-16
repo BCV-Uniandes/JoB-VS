@@ -55,9 +55,6 @@ We train JoB-VS on the original images, without using brain masks, and then we f
 # For training on original images
 python main.py --gpu GPU_IDs --batch BATCH_SIZE --fold FOLD --data_ver OUT_DIRECTORY --name OUTPUT_DIR
 
-# For the training on images with brain masks
-python main.py --gpu GPU_IDs --batch BATCH_SIZE --fold FOLD --data_ver OUT_DIRECTORY --name OUTPUT_DIR --mask
-
 # For the Free AT fine tuning
 python main.py --gpu GPU_IDs --batch BATCH_SIZE --fold FOLD --data_ver OUT_DIRECTORY --name OUTPUT_DIR_FREE_AT --ft --pretrained OUTPUT_DIR --AT
 ```
