@@ -5,7 +5,7 @@ This repository provides a PyTorch implementation of [JoB-VS: Joint Brain-Vessel
 ## Paper
 
 [JoB-VS: Joint Brain-Vessel Segmentation in TOF-MRA Images](https://biomedicalcomputervision.uniandes.edu.co/wp-content/uploads/2023/04/ISBI2023_paper_07517553.pdf)<br/>
-Natalia Valderrama<sup>1</sup>, Ioannis Pitsiorlas<sup>2</sup>, Luisa Vargas<sup>1</sup>,[Pablo Arbeláez](https://scholar.google.com.co/citations?user=k0nZO90AAAAJ&hl=en)<sup>1</sup>*, Maria A. Zuluaga<sup>2</sup><br/>
+Natalia Valderrama<sup>1</sup>, Ioannis Pitsiorlas<sup>2</sup>, Luisa Vargas<sup>1</sup>, [Pablo Arbeláez](https://scholar.google.com.co/citations?user=k0nZO90AAAAJ&hl=en)<sup>1</sup>*, Maria A. Zuluaga<sup>2</sup><br/>
 [ISBI 2023](https://2023.biomedicalimaging.org/en/default.asp).<br><br>
 <sup>1 </sup> Center for Research and Formation in Artificial Intelligence ([CINFONIA](https://cinfonia.uniandes.edu.co/)), Universidad de Los Andes. <br/>
 <sup>2 </sup>Data Science Department, EURECOM, Sophia Antipolis, France<br/>
@@ -53,13 +53,13 @@ We train JoB-VS on the original images, without using brain masks, and then we f
 
 ```
 # For training on original images
-python main.py --gpu GPU_IDs --batch BATCH_SIZE --data_ver OUT_DIRECTORY --name OUTPUT_DIR
+python main.py --gpu GPU_IDs --batch BATCH_SIZE --fold FOLD --data_ver OUT_DIRECTORY --name OUTPUT_DIR
 
 # For the training on images with brain masks
-python main.py --gpu GPU_IDs --batch BATCH_SIZE --data_ver OUT_DIRECTORY --name OUTPUT_DIR --mask
+python main.py --gpu GPU_IDs --batch BATCH_SIZE --fold FOLD --data_ver OUT_DIRECTORY --name OUTPUT_DIR --mask
 
 # For the Free AT fine tuning
-python main.py --gpu GPU_IDs --batch BATCH_SIZE --data_ver OUT_DIRECTORY --name OUTPUT_DIR_FREE_AT --ft --pretrained OUTPUT_DIR --AT
+python main.py --gpu GPU_IDs --batch BATCH_SIZE --fold FOLD --data_ver OUT_DIRECTORY --name OUTPUT_DIR_FREE_AT --ft --pretrained OUTPUT_DIR --AT
 ```
 
 For evaluating the models, modify the EXPS_PATH, PATH_ANNS and PATH_PREDS in the file run_evaluations.py:
