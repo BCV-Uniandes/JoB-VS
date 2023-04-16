@@ -1,10 +1,10 @@
 # JoB-VS
 
-This repository provides a PyTorch implementation of [JoB-VS: Joint Brain-Vessel Segmentation in TOF-MRA Images](https://arxiv.org/abs/2107.04263) presented in [ISBI 2023](https://2023.biomedicalimaging.org/en/default.asp). JoB-VS performs a joint-task learning for brain and vessel segmentation (JoB-VS) in Time-of-Flight Magnetic Resonance images, being an end-to-end vessel segmentation framework. Unlike other vessel segmentation methods, our approach avoids the pre-processing step of implementing a model to extract the brain from the volumetric input data. Our method builds upon [Towards Robust General Medical Image Segmentation](https://arxiv.org/abs/2107.04263) with a segmentation head that allows the simultaneous prediction of the brain and vessel mask.
+This repository provides a PyTorch implementation of [JoB-VS: Joint Brain-Vessel Segmentation in TOF-MRA Images](https://biomedicalcomputervision.uniandes.edu.co/wp-content/uploads/2023/04/ISBI2023_paper_07517553.pdf) presented in [ISBI 2023](https://2023.biomedicalimaging.org/en/default.asp). JoB-VS performs a joint-task learning for brain and vessel segmentation (JoB-VS) in Time-of-Flight Magnetic Resonance images, being an end-to-end vessel segmentation framework. Unlike other vessel segmentation methods, our approach avoids the pre-processing step of implementing a model to extract the brain from the volumetric input data. Our method builds upon [Towards Robust General Medical Image Segmentation](https://arxiv.org/abs/2107.04263) with a segmentation head that allows the simultaneous prediction of the brain and vessel mask.
 
 ## Paper
 
-[JoB-VS: Joint Brain-Vessel Segmentation in TOF-MRA Images]https://biomedicalcomputervision.uniandes.edu.co/wp-content/uploads/2023/04/ISBI2023_paper_07517553.pdf),<br/>
+[JoB-VS: Joint Brain-Vessel Segmentation in TOF-MRA Images](https://biomedicalcomputervision.uniandes.edu.co/wp-content/uploads/2023/04/ISBI2023_paper_07517553.pdf),<br/>
 Natalia Valderrama<sup>1</sup>, Ioannis Pitsiorlas<sup>2</sup>, Luisa Vargas<sup>1</sup>,[Pablo Arbeláez](https://scholar.google.com.co/citations?user=k0nZO90AAAAJ&hl=en)<sup>1</sup>*<br/>, Maria A. Zuluaga<sup>2</sup>
 [ISBI 2023](https://2023.biomedicalimaging.org/en/default.asp).<br><br>
 <sup>1 </sup> Center for Research and Formation in Artificial Intelligence ([CINFONIA](https://cinfonia.uniandes.edu.co/)), Universidad de Los Andes. <br/>
@@ -15,8 +15,8 @@ Natalia Valderrama<sup>1</sup>, Ioannis Pitsiorlas<sup>2</sup>, Luisa Vargas<sup
 ### Cloning the repository
 
 ```bash
-$ git clone git@github.com:BCV-Uniandes/ROG.git
-$ cd ROG
+$ git clone https://github.com/BCV-Uniandes/JoB-VS.git
+$ cd JoB-VS
 $ python setup.py install
 ```
 ## Dataset Preparation
