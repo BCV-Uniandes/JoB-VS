@@ -45,7 +45,7 @@ def Calculate_sizes(root, num_workers, remake=False):
         dataset = json.load(open(file, 'r'))
         images = [os.path.join(root, fold, x['label']) for x in dataset['training']]
 
-        file_name = os.path.join(root, fold, 'dataset_prueba.json')
+        file_name = os.path.join(root, fold, 'dataset_stats.json')
         if os.path.isfile(file_name) and not remake:
             print('Sizes of fold {} already calculated'.format(fold))
             continue

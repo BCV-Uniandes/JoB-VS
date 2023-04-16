@@ -5,17 +5,43 @@ import matplotlib
 import numpy as np
 import pandas as pd
 import os.path as osp
+import nibabel as nib
 
 from scipy.stats import mode
 from joblib import Parallel, delayed
-from libs.utilities.test import read_image, dice_score
 from sklearn.metrics import average_precision_score, precision_recall_curve
 
 import matplotlib.pyplot as plt
 
 matplotlib.pyplot.switch_backend('Agg')
 
-EXPS_PATH = '/media/SSD0/nfvalderrama/Vessel_Segmentation/exps'
+EXPS_PATH = 'your/saving/experiments/path'
+
+def read_image(path):
+    im = nib.load(path)
+    affine = im.affine
+    im = im.get_fdata()
+    return im, affine
+
+
+def dice_score(im, lb):
+    lb_f = np.ndarray.flatten(lb)
+    im_f = np.ndarray.flatten(im)
+
+    tps = np.sum(im * lb)
+    fps = np.sum(im * (1 - lb))
+    fns = np.sum((1 - im) * lb)
+    labels = np.sum(lb_f)
+    pred = np.sum(im_f)
+
+    if labels == 0 and pred == 0:
+        dice = 1
+    else:
+        dice = (2 * tps) / (2 * tps + fps + fns)
+    rec = tps / (tps + fns)
+    prec = tps / (tps + fps)
+    return dice, rec, prec
+
 
 def draw_curve(scores, save_path):
 
@@ -96,8 +122,8 @@ def  write_in_folder(patients, path_preds):
     
     return scores[:5], {'precision': scores[-2], 'recall': scores[-1]}
 
-def compute_metrics_ap(path_preds, path_anns, model, fold, inf_mode):
-    path_preds = osp.join(EXPS_PATH, model, path_preds, fold, 'volumes', inf_mode)
+def compute_metrics_ap(path_preds, path_anns, fold, inf_mode):
+    path_preds = osp.join(EXPS_PATH, path_preds, fold, 'volumes', inf_mode)
     path_anns = osp.join(path_anns, fold, 'labelsTs')
     
     images = os.listdir(path_preds)
@@ -110,14 +136,16 @@ def compute_metrics_ap(path_preds, path_anns, model, fold, inf_mode):
     return metrics, curves
 
 if __name__ == '__main__':
-    PATH_ANNS = '/media/SSD0/nfvalderrama/Vessel_Segmentation/data/Vessel_Segmentation/mask'
+    PATH_ANNS = 'your/saving/processed/data/path/mask'
+    # Dictionary of the {experiment_name: model_name}
     PATH_PREDS = {
-                  'JoB-VS': 'ROG',
+                  'Our_method': 'JoB-VS',
+                  'UNet_method': 'UNet',
                   }
     
     METRICS = ['Mean AP', 'F-med max', 'Precision max', 'Recall max', 'Threshold']
     
-    save_path = osp.join(EXPS_PATH, 'Resume', 'vessel_seg_results')
+    save_path = osp.join(EXPS_PATH, 'vessel_seg_results')
     
     if os.path.isfile(save_path + '.pth'):
         pth_resume = torch.load(save_path + '.pth')
@@ -125,18 +153,24 @@ if __name__ == '__main__':
         pth_resume = []
         
     for pred, model in PATH_PREDS.items():
-        for inf_mode in ['mask', 'original']:
+        # Include 'mask/vessels_logits' in the list if you want to test
+        # models trained with brain masks.
+        for inf_mode in ['original/vessels_logits']:
             pd_resume = {}
             pd_resume['Name'] = [f'{model}_{pred}_{inf_mode}']
             for fold in ['fold2', 'fold1']:
-                metrics, curves = compute_metrics_ap(pred, PATH_ANNS, model, fold, inf_mode)
+                metrics, curves = compute_metrics_ap(pred, PATH_ANNS, fold, inf_mode)
                 print(f'-------Saving stats for {fold} {inf_mode} ------')
                 for i, metric in enumerate(metrics):
                     pd_resume[f'{METRICS[i]}_{fold}'] = [metric]
                 pth_resume.append({f'{model}_{pred}_{inf_mode}_{fold}': curves})
     
             pd_resume = pd.DataFrame(pd_resume)
-            pd_resume.to_csv(save_path + '.csv', mode='a', index=False, header=False)
+            save_name = save_path + '.csv'
+            pd_resume.to_csv(save_name, mode='a',
+                             index=False, 
+                             header=not os.path.exists(save_name)
+                             )
             torch.save(pth_resume, save_path + '.pth')
     
     

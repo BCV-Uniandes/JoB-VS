@@ -10,7 +10,6 @@ from utils import read_json, preprocess, cases_list
 def Preprocess_datasets(out_dir, root, workers, remake):
     # ! Modified to read annotations in OASIS format. [N. Valderrama ~ May 17th]
     folds = ['fold1', 'fold2']
-    main_root = '/media/SSD0/nfvalderrama/Vessel_Segmentation/data/tof'
     for x in folds:
         out_task = os.path.join(out_dir, x)
         os.makedirs(out_task, exist_ok=True)
@@ -20,6 +19,7 @@ def Preprocess_datasets(out_dir, root, workers, remake):
         os.makedirs(os.path.join(out_task, 'labelsTs'), exist_ok=True)
 
         dataset, limits, stats, spacing, CT = read_json(x, root)
+        main_root = dataset['root']
         dataset['root'] = os.path.join(out_dir, x)
         for split in ['training', 'validation']:
             partition = 'Tr' if split == 'training' else 'Ts'
@@ -34,8 +34,6 @@ def Preprocess_datasets(out_dir, root, workers, remake):
         args = {'task': main_root, 'spacing': spacing,
                 'limits': limits, 'stats': stats, 'path': out_task,
                 'affine': affine, 'CT': CT}
-
-        
 
         print('----- Processing training set -----')
         patientsTr = cases_list(dataset, out_task, 'imagesTr', 'training', remake=remake)

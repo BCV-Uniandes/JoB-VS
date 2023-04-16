@@ -8,10 +8,9 @@ import numpy as np
 import libs.trainer as trainer
 
 from libs.model.model import ROG
-from libs.model.unetr import UNETR
 from settings import plan_experiment
 from libs.dataloader import dataloader, helpers
-from libs.utilities import losses, utils, test, cldice
+from libs.utilities import losses, utils, cldice
 
 import torch
 import torch.optim as optim
@@ -64,12 +63,7 @@ def main(rank, world_size, args):
     if args.ixi:
         images_path = os.path.join(args.save_path, 'IXI_DATASET')
     
-    if args.our_masks:
-        images_path = os.path.join(images_path, 'masks_pred')
-    elif args.logits:
-        images_path = os.path.join(images_path, ver)
-    else:
-        images_path = os.path.join(images_path, 'binary')
+    images_path = os.path.join(images_path, ver)
 
     load_path = args.save_path  # If we're resuming the training of a model
     if args.pretrained is not None:
@@ -309,17 +303,10 @@ def main(rank, world_size, args):
             checkpoint['epoch'], checkpoint['dice']))
 
     # EVALUATE THE MODEL
-    trainer.test(args,
+    trainer.test(
             info, ddp_model, test_loader, images_path,
             info['data_file'], rank, world_size)
     dist.barrier()
-    # CALCULATE THE FINAL METRICS
-    classes = 3 if args.detection else 4
-    if rank == 0:
-        test.test(
-            folder=images_path, root_dir=info['root'], 
-            csv_file=info['data_file'], classes=classes,
-            detection=args.detection)
     cleanup()
 
 
@@ -331,9 +318,9 @@ if __name__ == '__main__':
                         help='Task to train/evaluate (default: 4)')
     parser.add_argument('--model', type=str, default='ROG',
                         help='Model to train with the ROG training curriculum (default: ROG)')
-    parser.add_argument('--data_ver', type=str, default='/media/SSD0/nfvalderrama/Vessel_Segmentation/data/Vessel_Segmentation/',
+    parser.add_argument('--data_ver', type=str, default='your/saving/processed/data/path',
                         help='Path to data')
-    parser.add_argument('--name', type=str, default='ROG',
+    parser.add_argument('--name', type=str, default='JoB-VS',
                         help='Name of the current experiment (default: ROG)')
     parser.add_argument('--AT', action='store_true', default=False,
                         help='Train a model with Free AT')
@@ -351,7 +338,9 @@ if __name__ == '__main__':
                         help='Weights to load (default: best_dice)')
     parser.add_argument('--pretrained', type=str, default=None,
                         help='Name of the folder with the pretrained model')
-
+    parser.add_argument('--ixi', action='store_true', default=False,
+                        help='Evaluate a model in IXI dataset')
+    
     # TRAINING HYPERPARAMETERS
     parser.add_argument('--lr', type=float, default=5e-4,
                         help='Initial learning rate (default: 1e-3)')
@@ -380,8 +369,6 @@ if __name__ == '__main__':
                         help='Use data with the brain masks')
     parser.add_argument('--cldice', action='store_true', default=False,
                         help='Use cldice for vessel segmentation')
-    parser.add_argument('--our_masks', action='store_true', default=False,
-                        help='Use data with the brain masks predicted by our models')
     parser.add_argument('--detection', action='store_true', default=False,
                         help='Evaluate with detection metrics')
     parser.add_argument('--threshold', type=float, default=None,
